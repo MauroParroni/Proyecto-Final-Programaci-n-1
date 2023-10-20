@@ -12,7 +12,7 @@ namespace Proyecto_final
         public Form1()
         {
 
-            //InitializeComponent();
+            InitializeComponent();
         }
 
         private void label4_Click(object sender, EventArgs e)
@@ -111,6 +111,11 @@ namespace Proyecto_final
         }
 
         private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
         {
 
         }
