@@ -111,7 +111,7 @@ namespace Proyecto_final
             }
             else
             {
-                MessageBox.Show("Seleccione una fila para modificar.");
+                MessageBox.Show(" Por favor realize los cambios, seleccione la fila y vuelva a presionar.");
             }
         }
         private void button4_Click(object sender, EventArgs e)
@@ -190,7 +190,7 @@ namespace Proyecto_final
             }
             else
             {
-                MessageBox.Show("Seleccione una fila para eliminar.");
+                MessageBox.Show("Seleccione una fila para dar de baja un alumno.");
             }
         }
 

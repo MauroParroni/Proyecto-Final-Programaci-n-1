@@ -87,7 +87,7 @@ namespace Proyecto_final
                 }
             }
 
-            MessageBox.Show("Datos guardados en la base de datos.");
+            MessageBox.Show("Datos del alumno guardados.");
         }
 
         private void button2_Click(object sender, EventArgs e)
