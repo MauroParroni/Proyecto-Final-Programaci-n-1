@@ -3,6 +3,8 @@ using OfficeOpenXml.Style;
 using System;
 using System.Data;
 using System.Data.SQLite;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Proyecto_final
@@ -14,14 +16,22 @@ namespace Proyecto_final
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             InitializeComponent();
             CargarDatos();
+            dataGridView1.AutoResizeColumns();
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
         private void button1_Click(object sender, EventArgs e)
         {
             string busqueda = inputBusqueda.Text;
 
+            if (string.IsNullOrEmpty(busqueda))
+            {
+                CargarDatos(); 
+                return;
+            }
+
             string selectQuery = "SELECT * FROM Alumnos WHERE nombre = @busqueda";
 
-            string connectionString = "Data Source=InstitutoBepinho.db;Version=3;";
+            string connectionString = "Data Source=InstitutoBepinho3.db;Version=3;";
 
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
@@ -42,7 +52,7 @@ namespace Proyecto_final
         }
         private void CargarDatos()
         {
-            string connectionString = "Data Source=InstitutoBepinho.db;Version=3;";
+            string connectionString = "Data Source=InstitutoBepinho3.db;Version=3;";
 
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
@@ -63,9 +73,14 @@ namespace Proyecto_final
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-  
-        }
 
+        }
+        private bool esvalido(string valor)
+        {
+            string pattern = @"^[a-zA-Z]+$";
+            return System.Text.RegularExpressions.Regex.IsMatch(valor, pattern);
+        }
+       
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -76,19 +91,77 @@ namespace Proyecto_final
                 {
                     int selectedIndex = dataGridView1.SelectedRows[0].Index;
                     DataGridViewRow selectedRow = dataGridView1.Rows[selectedIndex];
-
+                    string patternyear = @"^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\d{4}$";
+                    string pattern = @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$";
                     string idAlumno = selectedRow.Cells["idAlumno"].Value.ToString();
                     string nombre = selectedRow.Cells["Nombre"].Value.ToString();
                     string apellido = selectedRow.Cells["Apellido"].Value.ToString();
-                    string matricula = selectedRow.Cells["Matricula"].Value.ToString();
-                    string edad = selectedRow.Cells["Edad"].Value.ToString();
+                    string matricula = selectedRow.Cells["DNI"].Value.ToString();
+                    string edad = selectedRow.Cells["fecha_nac"].Value.ToString();
                     string email = selectedRow.Cells["Email"].Value.ToString();
                     string carrera = selectedRow.Cells["Carrera"].Value.ToString();
-                    string connectionString = "Data Source=InstitutoBepinho.db;Version=3;";
+
+                    if (int.TryParse(matricula, out int valor))
+                    {
+                       if (valor < 100000000 && valor > 5000000)
+                        {
+
+                        }
+                        else
+                        {
+                            MessageBox.Show(" Ingrese un dni valido");
+                            CargarDatos();
+                            return;
+                           
+                        }
+
+                    }
+                    else
+                    {
+                        MessageBox.Show(" Ingrese un dni valido");
+                        CargarDatos();
+                        return;
+                       
+                    }
+                   
+                    if (Regex.IsMatch(email, pattern))
+                    {
+                    }
+                    else
+                    {
+                        MessageBox.Show(" Ingrese un correo valido");
+                        CargarDatos();
+                        return;
+                        
+                    }
+                    if (Regex.IsMatch(edad, patternyear))
+                    {
+                        string[] dateParts = edad.Split('/');
+                        int year = Convert.ToInt32(dateParts[2]);
+                        if (year > 2005)
+                        {
+                            MessageBox.Show("Ingrese una fecha valida");
+                            CargarDatos();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show(" Ingrese una fecha valida");
+                        CargarDatos();
+                        return;
+                    }
+                    if (!esvalido(nombre) || !esvalido(apellido))
+                    {
+                        MessageBox.Show("ingrese un valor valido");
+                        CargarDatos();
+                        return;
+                    }
+                    string connectionString = "Data Source=InstitutoBepinho3.db;Version=3;";
                     using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                     {
                         connection.Open();
-                        string updateQuery = "UPDATE Alumnos SET Nombre = @nombre, Apellido = @apellido, Matricula = @matricula, Edad = @edad, Email = @email, Carrera = @carrera WHERE idAlumno = @idAlumno";
+                        string updateQuery = "UPDATE Alumnos SET Nombre = @nombre, Apellido = @apellido, DNI = @matricula, fecha_nac = @edad, Email = @email, Carrera = @carrera WHERE idAlumno = @idAlumno";
 
                         using (SQLiteCommand command = new SQLiteCommand(updateQuery, connection))
                         {
@@ -107,7 +180,7 @@ namespace Proyecto_final
                     MessageBox.Show("Fila modificada con éxito.");
                 }
 
-                    
+
             }
             else
             {
@@ -124,7 +197,7 @@ namespace Proyecto_final
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string excelFileName = saveFileDialog.FileName;
-                string connectionString = "Data Source=InstitutoBepinho.db;Version=3;";
+                string connectionString = "Data Source=InstitutoBepinho3.db;Version=3;";
 
                 using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                 {
@@ -169,7 +242,7 @@ namespace Proyecto_final
 
                 if (dialogResult == DialogResult.Yes)
                 {
-                    string connectionString = "Data Source=InstitutoBepinho.db;Version=3;";
+                    string connectionString = "Data Source=InstitutoBepinho3.db;Version=3;";
 
                     using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                     {
@@ -194,6 +267,11 @@ namespace Proyecto_final
             }
         }
 
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Form1 form1 = new Form1();
+            form1.Show();
+        }
     }
 }
 

@@ -14,6 +14,41 @@ namespace Proyecto_final
 
             InitializeComponent();
         }
+        private bool verificadatos()
+        {
+            string connectionString = "Data Source=InstitutoBepinho3.db;Version=3;";
+            string Matricula = inputMatricula.Text;
+
+            if (!esdnivalido(Matricula))
+            {
+                MessageBox.Show("Ingrese un DNI válido");
+                return false;
+            }
+
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                string selectQuery = "SELECT * FROM Alumnos WHERE DNI = @Matricula";
+
+                using (SQLiteCommand cmd = new SQLiteCommand(selectQuery, connection))
+                {
+                    cmd.Parameters.AddWithValue("@Matricula", Matricula);
+
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            MessageBox.Show("Ya existe un usuario con este DNI.");
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
 
         private void label4_Click(object sender, EventArgs e)
         {
@@ -23,6 +58,20 @@ namespace Proyecto_final
         private void textBox4_TextChanged(object sender, EventArgs e)
         {
         }
+        private bool esvalido(string valor)
+        {
+            string pattern = @"^[a-zA-Z]+$";
+            return System.Text.RegularExpressions.Regex.IsMatch(valor, pattern);
+        }
+        private bool esdnivalido(string dni)
+        {
+            if (int.TryParse(dni, out int valor))
+            {
+                int dnilenght = dni.Length;
+                return dnilenght == 7 || dnilenght == 8;
+            }
+            return false;
+        }
 
         private void label1_Click(object sender, EventArgs e)
         {
@@ -31,13 +80,19 @@ namespace Proyecto_final
 
         private void button1_Click(object sender, EventArgs e)
         {
+            string patternyear = @"^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\d{4}$";
             string pattern = @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$";
             string nombre = inputNombre.Text;
             string apellido = inputApellido.Text;
-            int Matricula;
-            int edad;
+            string Matricula = inputMatricula.Text;
+            string edad = inputEdad.Text;
             string email = inputEmail.Text;
             string carrera = comboBoxCarrera.SelectedItem.ToString();
+            if (!esvalido(nombre) || !esvalido(apellido))
+            {
+                MessageBox.Show("ingrese un valor valido");
+                return;
+            }
             if (Regex.IsMatch(email, pattern))
             {
             }
@@ -46,35 +101,38 @@ namespace Proyecto_final
                 MessageBox.Show(" Ingrese un correo valido");
                 return;
             }
-            if (!int.TryParse(inputMatricula.Text, out Matricula))
+            if (Regex.IsMatch(edad, patternyear))
             {
-                MessageBox.Show(" Matricula debe ser un número entero válido.");
-                return;
+                string[] dateParts = edad.Split('/');
+                int year = Convert.ToInt32(dateParts[2]);
+                if (year > 2005)
+                {
+                    Console.WriteLine("Ingrese una fecha valida");
+                    return;
+                }
             }
-            if (!int.TryParse(inputEdad.Text, out edad))
+            else
             {
-                MessageBox.Show("Edad debe ser un número entero válido.");
-                return;
-            }
-            if (edad > 99)
-            {
-                MessageBox.Show("Ingrese una edad permitida");
+                MessageBox.Show(" Ingrese una fecha valida");
                 return;
             }
 
+            if (verificadatos())
+            {
 
-            string connectionString = "Data Source=InstitutoBepinho.db;Version=3;";
+           
+            string connectionString = "Data Source=InstitutoBepinho3.db;Version=3;";
 
             using (SQLiteConnection connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
-                string createTableQuery = "CREATE TABLE IF NOT EXISTS Alumnos (idAlumno INTEGER PRIMARY KEY AUTOINCREMENT, Nombre TEXT, Apellido TEXT, Matricula INTEGER, edad INTEGER, Email TEXT, Carrera TEXT)";
+                string createTableQuery = "CREATE TABLE IF NOT EXISTS Alumnos (idAlumno INTEGER PRIMARY KEY AUTOINCREMENT, Nombre TEXT, Apellido TEXT, DNI INTEGER, fecha_nac TEXT, Email TEXT, Carrera TEXT)";
                 using (SQLiteCommand createTableCommand = new SQLiteCommand(createTableQuery, connection))
                 {
                     createTableCommand.ExecuteNonQuery();
                 }
 
-                string insertQuery = "INSERT INTO Alumnos (nombre, apellido, Matricula, edad, email, carrera) VALUES (@nombre, @apellido, @Matricula, @edad, @email, @carrera)";
+                string insertQuery = "INSERT INTO Alumnos (nombre, apellido, DNI, fecha_nac, email, carrera) VALUES (@nombre, @apellido, @Matricula, @edad, @email, @carrera)";
                 using (SQLiteCommand insertCommand = new SQLiteCommand(insertQuery, connection))
                 {
                     insertCommand.Parameters.AddWithValue("@nombre", nombre);
@@ -88,6 +146,13 @@ namespace Proyecto_final
             }
 
             MessageBox.Show("Datos del alumno guardados.");
+            inputEdad.Text = "";
+            inputEmail.Text = "";
+            inputMatricula.Text = "";
+            inputNombre.Text = "";
+            inputApellido.Text = "";
+            comboBoxCarrera.SelectedIndex = -1;
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -116,6 +181,11 @@ namespace Proyecto_final
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
         {
 
         }

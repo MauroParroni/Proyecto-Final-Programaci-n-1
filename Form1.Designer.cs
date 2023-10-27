@@ -63,6 +63,7 @@
             // 
             inputNombre.Location = new Point(26, 88);
             inputNombre.Name = "inputNombre";
+            inputNombre.PlaceholderText = "Ingrese Nombre";
             inputNombre.Size = new Size(220, 27);
             inputNombre.TabIndex = 1;
             // 
@@ -70,6 +71,7 @@
             // 
             inputApellido.Location = new Point(26, 142);
             inputApellido.Name = "inputApellido";
+            inputApellido.PlaceholderText = "Ingrese Apellido";
             inputApellido.Size = new Size(220, 27);
             inputApellido.TabIndex = 3;
             inputApellido.TextChanged += inputApellido_TextChanged;
@@ -87,6 +89,7 @@
             // 
             inputMatricula.Location = new Point(26, 195);
             inputMatricula.Name = "inputMatricula";
+            inputMatricula.PlaceholderText = "Ingrese DNI";
             inputMatricula.Size = new Size(220, 27);
             inputMatricula.TabIndex = 5;
             // 
@@ -95,14 +98,16 @@
             label3.AutoSize = true;
             label3.Location = new Point(26, 172);
             label3.Name = "label3";
-            label3.Size = new Size(100, 20);
+            label3.Size = new Size(35, 20);
             label3.TabIndex = 4;
-            label3.Text = "Nro Matricula";
+            label3.Text = "DNI";
+            label3.Click += label3_Click;
             // 
             // inputEdad
             // 
             inputEdad.Location = new Point(26, 248);
             inputEdad.Name = "inputEdad";
+            inputEdad.PlaceholderText = "dd/mm/yyyy";
             inputEdad.Size = new Size(220, 27);
             inputEdad.TabIndex = 7;
             inputEdad.TextChanged += textBox4_TextChanged;
@@ -154,6 +159,7 @@
             // 
             inputEmail.Location = new Point(26, 303);
             inputEmail.Name = "inputEmail";
+            inputEmail.PlaceholderText = "Ingrese su email";
             inputEmail.Size = new Size(220, 27);
             inputEmail.TabIndex = 12;
             // 

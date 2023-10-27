@@ -34,12 +34,13 @@
             button3 = new Button();
             button4 = new Button();
             dataGridView1 = new DataGridView();
+            button5 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // button1
             // 
-            button1.Location = new Point(14, 14);
+            button1.Location = new Point(231, 16);
             button1.Name = "button1";
             button1.Size = new Size(132, 29);
             button1.TabIndex = 0;
@@ -49,7 +50,7 @@
             // 
             // inputBusqueda
             // 
-            inputBusqueda.Location = new Point(179, 16);
+            inputBusqueda.Location = new Point(394, 16);
             inputBusqueda.Name = "inputBusqueda";
             inputBusqueda.PlaceholderText = "Ingrese nombre del alumno";
             inputBusqueda.Size = new Size(238, 27);
@@ -57,7 +58,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(454, 18);
+            button2.Location = new Point(676, 18);
             button2.Name = "button2";
             button2.Size = new Size(129, 28);
             button2.TabIndex = 2;
@@ -67,7 +68,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(667, 16);
+            button3.Location = new Point(839, 16);
             button3.Name = "button3";
             button3.Size = new Size(135, 30);
             button3.TabIndex = 3;
@@ -77,7 +78,7 @@
             // 
             // button4
             // 
-            button4.Location = new Point(898, 15);
+            button4.Location = new Point(995, 15);
             button4.Name = "button4";
             button4.Size = new Size(116, 31);
             button4.TabIndex = 4;
@@ -88,19 +89,31 @@
             // dataGridView1
             // 
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(14, 61);
+            dataGridView1.Location = new Point(14, 59);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.RowTemplate.Height = 29;
-            dataGridView1.Size = new Size(1000, 379);
+            dataGridView1.Size = new Size(1097, 456);
             dataGridView1.TabIndex = 5;
             dataGridView1.CellContentClick += dataGridView1_CellContentClick;
+            // 
+            // button5
+            // 
+            button5.Location = new Point(32, 16);
+            button5.Name = "button5";
+            button5.RightToLeft = RightToLeft.Yes;
+            button5.Size = new Size(94, 29);
+            button5.TabIndex = 6;
+            button5.Text = "Atras";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
             // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1026, 450);
+            ClientSize = new Size(1123, 527);
+            Controls.Add(button5);
             Controls.Add(dataGridView1);
             Controls.Add(button4);
             Controls.Add(button3);
@@ -122,5 +135,6 @@
         private Button button3;
         private Button button4;
         private DataGridView dataGridView1;
+        private Button button5;
     }
 }
