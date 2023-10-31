@@ -29,7 +29,8 @@ namespace Proyecto_final
                 return;
             }
 
-            string selectQuery = "SELECT * FROM Alumnos WHERE nombre = @busqueda";
+            string selectQuery = "SELECT * FROM Alumnos WHERE nombre LIKE '%' || @busqueda || '%'";
+
 
             string connectionString = "Data Source=InstitutoBepinho3.db;Version=3;";
 
