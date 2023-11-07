@@ -11,26 +11,35 @@ namespace Proyecto_final
 {
     public partial class Form2 : Form
     {
+        private System.Windows.Forms.Timer timer;
+        private int countdown = 10;
         public Form2()
         {
+
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             InitializeComponent();
+            this.Text = "Tabla Dudosa";
+            this.Icon = new Icon(@"C:\Users\Locazin\source\repos\WinFormsApp1\Proyecto final\images\favicon.ico"); //funciona solo localmente xd
             CargarDatos();
             dataGridView1.AutoResizeColumns();
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             string busqueda = inputBusqueda.Text;
 
             if (string.IsNullOrEmpty(busqueda))
             {
-                CargarDatos(); 
+                CargarDatos();
                 return;
             }
 
-            string selectQuery = "SELECT * FROM Alumnos WHERE nombre LIKE '%' || @busqueda || '%'";
-
+            string selectQuery = "SELECT * FROM Alumnos WHERE nombre LIKE '%' || @busqueda || '%' OR apellido LIKE '%' || @busqueda || '%'";
 
             string connectionString = "Data Source=InstitutoBepinho3.db;Version=3;";
 
@@ -46,11 +55,22 @@ namespace Proyecto_final
                     {
                         DataTable dataTable = new DataTable();
                         adapter.Fill(dataTable);
-                        dataGridView1.DataSource = dataTable;
+
+                        if (dataTable.Rows.Count == 0)
+                        {
+                            MessageBox.Show("No se encontraron usuarios con ese nombre/apellido.", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            CargarDatos();
+                        }
+                        else
+                        {
+                            dataGridView1.DataSource = dataTable;
+                        }
                     }
                 }
             }
         }
+
+
         private void CargarDatos()
         {
             string connectionString = "Data Source=InstitutoBepinho3.db;Version=3;";
@@ -67,6 +87,7 @@ namespace Proyecto_final
                         DataTable tablaAlumnos = new DataTable();
                         adapter.Fill(tablaAlumnos);
                         dataGridView1.DataSource = tablaAlumnos;
+                        dataGridView1.Columns["Carrera"].ReadOnly = true;
                     }
                 }
             }
@@ -81,10 +102,11 @@ namespace Proyecto_final
             string pattern = @"^[a-zA-Z]+$";
             return System.Text.RegularExpressions.Regex.IsMatch(valor, pattern);
         }
-       
+
 
         private void button2_Click(object sender, EventArgs e)
         {
+
             if (dataGridView1.SelectedRows.Count > 0)
             {
                 DialogResult dialogResult = MessageBox.Show("¿Estás seguro de que deseas modificar esta fila?", "Confirmar eliminación", MessageBoxButtons.YesNo);
@@ -100,11 +122,9 @@ namespace Proyecto_final
                     string matricula = selectedRow.Cells["DNI"].Value.ToString();
                     string edad = selectedRow.Cells["fecha_nac"].Value.ToString();
                     string email = selectedRow.Cells["Email"].Value.ToString();
-                    string carrera = selectedRow.Cells["Carrera"].Value.ToString();
-
                     if (int.TryParse(matricula, out int valor))
                     {
-                       if (valor < 100000000 && valor > 5000000)
+                        if (valor < 100000000 && valor > 5000000)
                         {
 
                         }
@@ -113,7 +133,7 @@ namespace Proyecto_final
                             MessageBox.Show(" Ingrese un dni valido");
                             CargarDatos();
                             return;
-                           
+
                         }
 
                     }
@@ -122,9 +142,9 @@ namespace Proyecto_final
                         MessageBox.Show(" Ingrese un dni valido");
                         CargarDatos();
                         return;
-                       
+
                     }
-                   
+
                     if (Regex.IsMatch(email, pattern))
                     {
                     }
@@ -133,7 +153,7 @@ namespace Proyecto_final
                         MessageBox.Show(" Ingrese un correo valido");
                         CargarDatos();
                         return;
-                        
+
                     }
                     if (Regex.IsMatch(edad, patternyear))
                     {
@@ -162,7 +182,7 @@ namespace Proyecto_final
                     using (SQLiteConnection connection = new SQLiteConnection(connectionString))
                     {
                         connection.Open();
-                        string updateQuery = "UPDATE Alumnos SET Nombre = @nombre, Apellido = @apellido, DNI = @matricula, fecha_nac = @edad, Email = @email, Carrera = @carrera WHERE idAlumno = @idAlumno";
+                        string updateQuery = "UPDATE Alumnos SET Nombre = @nombre, Apellido = @apellido, DNI = @matricula, fecha_nac = @edad, Email = @email WHERE idAlumno = @idAlumno";
 
                         using (SQLiteCommand command = new SQLiteCommand(updateQuery, connection))
                         {
@@ -171,12 +191,12 @@ namespace Proyecto_final
                             command.Parameters.AddWithValue("@matricula", matricula);
                             command.Parameters.AddWithValue("@edad", edad);
                             command.Parameters.AddWithValue("@email", email);
-                            command.Parameters.AddWithValue("@carrera", carrera);
                             command.Parameters.AddWithValue("@idAlumno", idAlumno);
 
                             command.ExecuteNonQuery();
                         }
                     }
+
                     CargarDatos();
                     MessageBox.Show("Fila modificada con éxito.");
                 }
@@ -272,7 +292,88 @@ namespace Proyecto_final
         {
             Form1 form1 = new Form1();
             form1.Show();
+            this.Close();
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            string carreraSeleccionada = comboBoxCarrera.SelectedItem?.ToString();
+
+            string selectQuery = "SELECT * FROM Alumnos WHERE Carrera = @carrera";
+
+            if (carreraSeleccionada == "TODAS")
+            {
+                CargarDatos();
+                return;
+            }
+
+            string connectionString = "Data Source=InstitutoBepinho3.db;Version=3;";
+
+            using (SQLiteConnection connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                using (SQLiteCommand command = new SQLiteCommand(selectQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@carrera", carreraSeleccionada);
+
+                    using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(command))
+                    {
+                        DataTable dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+                        if (dataTable.Rows.Count == 0)
+                        {
+                            MessageBox.Show("No se encontraron usuarios con esta Carrera", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            CargarDatos();
+                        }
+                        else
+                        {
+                            dataGridView1.DataSource = dataTable;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("1-Para modificar la carrera de alguno de los alumnos debe eliminar por completo al alumno y volverlo a cargar(esto se solucionara en la 1.14.2)");
+        }
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            label4.Visible = true;
+            countdown--;
+            if (countdown > 0)
+            {
+                label4.Text = $"Por curioso en {countdown} segundos, saldrá un screamer";
+            }
+            else
+            {
+                timer.Stop();
+                MessageBox.Show("Te la creiste we");
+                label4.Visible = false;
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            timer = new System.Windows.Forms.Timer();
+            timer.Interval = 1000;
+            timer.Tick += Timer_Tick;
+            timer.Start();
+        }
+
+
     }
 }
 

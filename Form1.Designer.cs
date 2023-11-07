@@ -184,12 +184,14 @@
             // 
             // comboBoxCarrera
             // 
+            comboBoxCarrera.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxCarrera.FormattingEnabled = true;
             comboBoxCarrera.Items.AddRange(new object[] { "TECNICO SUPERIOR EN DESARROLLO DE SOFTWARE", "ANALISTA EN MEDIO AMBIENTE", "TECNICO SUPERIOR EN COMERCIO EXTERIOR", "COMERCIALIZACION Y ADMINISTRACION DE EMPRESAS", "TECNICO SUPERIOR EN HIGIENE Y SEGURIDAD", "ANALISTA EN SISTEMAS DE CONTROL", "ANALISTA EN MICROELECTRONICA", "QUIMICO SUPERIOR INDUSTRIAL", "QUIMICO SUPERIOR ANALISTA" });
             comboBoxCarrera.Location = new Point(26, 356);
             comboBoxCarrera.Name = "comboBoxCarrera";
             comboBoxCarrera.Size = new Size(220, 28);
             comboBoxCarrera.TabIndex = 15;
+            comboBoxCarrera.SelectedIndexChanged += comboBoxCarrera_SelectedIndexChanged;
             // 
             // label7
             // 
